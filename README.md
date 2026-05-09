@@ -4,7 +4,7 @@ Automatic lifeguarding and swim instructing shift coverage for Gmail.
 Claim shifts that correspond with your schedule and preferences, 
 before anyone else does. More hours = more money.
 
-![AutoGuard Logo](img/AutoGuard Logo.png)
+![AutoGuard Logo](img/AutoGuard-Logo.png)
 
 ## Architecture
 **Language:** Python
