@@ -21,7 +21,7 @@ client = anthropic.Anthropic()
 
 load_dotenv()
 TOKEN_PATH = os.getenv("TOKEN_PATH", "config/token.json")
-PREFERENCES_PATH = "staff/preferences.json"
+PREFERENCES_PATH = os.getenv("PREFERENCES_PATH", "staff/preferences.json")
 WHITELIST_PATH = os.getenv("WHITELIST_PATH", "staff/emails.json")
 
 # Get credentials for services
