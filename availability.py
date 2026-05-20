@@ -1,10 +1,11 @@
 '''
     Program guards:
     1. Conflicting schedules/events by checking my google calendar
-    2. Last second coverage requests by checking if the time the shift starts is less than "min_notice_minutes" from starting
+    2. Female-only shifts
     3. Certification requirements by checking if levels mentioned in email are in "restricted"
-    4. Undesired roles by checking "preferred_role"
-    5. Undesired shifts by checking "min_hours", different for each location
+    4. Last second coverage requests by checking if the time the shift starts is less than "min_notice_minutes" from starting
+    5. Undesired roles by checking "preferred_role"
+    6. Undesired shifts by checking "min_hours", different for each location
 '''
 
 import json
@@ -61,12 +62,17 @@ def final_check(calendar_service, path: str, shift: dict) -> bool:
     with open(path) as f:
         prefs = json.load(f)
 
-    # guard 2: restricted certification level
+    # guard 2: female-only shift
+    if shift.get("female_only"):
+        print(f"Rejected (female only): {shift}")
+        return False
+
+    # guard 3: restricted certification level
     if is_restricted(shift, prefs):
         print(f"Rejected (restricted level): {shift}")
         return False
 
-    # guard 3: not enough notice
+    # guard 4: not enough notice
     min_notice = prefs.get("min_notice_minutes")
     if min_notice is not None:
         shift_start = TIMEZONE.localize(datetime.strptime(f"{shift['date']}T{shift['start_time']}", "%Y-%m-%dT%H:%M"))
@@ -75,13 +81,13 @@ def final_check(calendar_service, path: str, shift: dict) -> bool:
             print(f"Rejected (not enough notice — {int(minutes_until)}min): {shift}")
             return False
 
-    # guard 4: undesired role (not in preferred_role list)
+    # guard 5: undesired role (not in preferred_role list)
     role = shift.get("role")
     if role and role not in prefs.get("preferred_role", []):
         print(f"Rejected (role): {shift}")
         return False
 
-    # guard 4: shift too short for location
+    # guard 6: shift too short for location
     location = shift.get("location")
     location_prefs = prefs.get("locations", {})
     if location and location in location_prefs:

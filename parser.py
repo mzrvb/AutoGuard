@@ -42,6 +42,7 @@ Each shift object must have:
    MSC = Milton Sports Centre or "Milton Sports", "MSC")
 - "role": "instructor" | "guard" | "both" | null
 - "level": the specific course or certification level being taught (e.g. "bronze medallion", "bronze cross", "national lifeguard", "aquafit"), or null if none mentioned or if it is a guard shift. Normalize abbreviations to their full name (e.g. "BM" → "bronze medallion", "BC" → "bronze cross", "NL" or "NLS" → "national lifeguard").
+- "female_only": true if the shift is explicitly restricted to female staff (e.g. "female only", "females only", "women only"), false otherwise.
 
 If multiple shifts exist, return all of them. If a field cannot be determined, use null."""
             }

@@ -1,0 +1,9 @@
+.git
+.env
+config/
+staff/
+__pycache__/
+*.pyc
+*.pyo
+deploy/
+img/

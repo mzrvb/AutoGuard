@@ -16,16 +16,27 @@ def _format_time(time_str: str) -> str:
     dt = datetime.strptime(time_str, "%H:%M")
     return dt.strftime("%I:%M %p").lstrip("0")
 
-# fetch existing AutoGuard label or create it if it doesn't exist
-def get_or_create_label(gmail_service) -> str:
+def _get_or_create(gmail_service, name: str) -> str:
     labels = gmail_service.users().labels().list(userId="me").execute()
     for label in labels.get("labels", []):
-        if label["name"] == "AutoGuard":
+        if label["name"] == name:
             return label["id"]
     created = gmail_service.users().labels().create(
-        userId="me", body={"name": "AutoGuard"}
+        userId="me", body={"name": name}
     ).execute()
     return created["id"]
+
+def get_labels(gmail_service) -> dict:
+    return {
+        "covered": _get_or_create(gmail_service, "AutoGuard C"),
+        "read":    _get_or_create(gmail_service, "AutoGuard R"),
+    }
+
+def apply_label(gmail_service, thread_id: str, label_id: str):
+    gmail_service.users().threads().modify(
+        userId="me", id=thread_id,
+        body={"addLabelIds": [label_id]}
+    ).execute()
 
 def _add_calendar_event(calendar_service, shift: dict, sender: str):
     # build event title from role and location
@@ -85,11 +96,7 @@ def send_reply(gmail_service, calendar_service, label_id: str, thread_id: str, m
         body={"raw": raw, "threadId": thread_id}
     ).execute()
 
-    # label the thread so replied emails are easy to find
-    gmail_service.users().threads().modify(
-        userId="me", id=thread_id,
-        body={"addLabelIds": [label_id]}
-    ).execute()
+    apply_label(gmail_service, thread_id, label_id)
 
     # add a tentative calendar block for each covered shift
     for s in shifts:

@@ -1,0 +1,11 @@
+{
+    "locations": {
+        "MSC": {"min_hours": 2.5},
+        "MLC": {"min_hours": 2.5},
+        "SCC": {"min_hours": 4.5}
+    },
+    "preferred_role": ["guard", "instructor", "both"],
+    "restricted": ["bronze medallion", "bronze cross", "national lifeguard", "aquafit"],
+    "female_only": false,
+    "min_notice_minutes": 240 
+}
